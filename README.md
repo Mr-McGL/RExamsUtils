@@ -1,5 +1,5 @@
 # R/exams utils
-R/exams[$^{[1]}$](https://www.r-exams.org/)  is an open-source package designed to streamline the creation of exams across various online platforms and in printed formats. The objective of this repository is to simplify the creation of exams using the R/exams package.
+ [R/exams](https://www.r-exams.org/)  is an open-source package designed to streamline the creation of exams across various online platforms and in printed formats. The objective of this repository is to simplify the creation of exams using the R/exams package.
 
 ## Notebooks
 Within the `/notebook/` folder, you will discover various notebooks tailored for execution on Google Colab, aimed at boosting the process of exam creation through the R/Exams platform. Colab provides the capability to utilize R/Exams without requiring users to install any software on their local devices. This folder offers tutorials, examples, tools, and code snippets to introduce educators to the R/Exams tool and its functionality.
