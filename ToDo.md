@@ -1,6 +1,6 @@
 ## ToDo:
 * Compilador de la libreria
-* PROBAR ENLACES A BIN
+  * añadir la descarga de este modulo en el script de configuración
 
 * Notebooks:
   * Meter enlaces dinamicos al contenido de una carpeta en git. Scripts y extensions.
@@ -27,5 +27,8 @@
   * Documentar las funciones de todos los módulos, extensiones y scripts
   * Fusionar RENBUtils con nbUtils
   * Dependencias!
+  * ***Los enlaces dinamicos a scripts y extensiones no son descargables!***
+  * La función de descarga de carpetas git tiene mucha deuda técnica
+  * El script de descarga de scripts funciona sobre dev/mgarcia
 
 * Actualizar los ficheros readme
