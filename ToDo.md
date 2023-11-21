@@ -22,9 +22,10 @@
     * Uso de imagenes.
     * Aleatorización
     * NOPs
+
 * Módudulos, librerías y scripts:
   * Documentar las funciones de todos los módulos, extensiones y scripts
   * Fusionar RENBUtils con nbUtils
-  * Ver que otros modulos añadir de nbutils
-  * Extender WriteFileE
+  * Dependencias!
+
 * Actualizar los ficheros readme
