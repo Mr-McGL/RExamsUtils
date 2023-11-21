@@ -8,6 +8,7 @@
 
 
 from ..ex import run
+from ..types import find_dict
 
 from pydrive.auth         import GoogleAuth       
 from pydrive.drive        import GoogleDrive      
@@ -140,7 +141,7 @@ def download_git_file(user: str, repo: str, repo_folder: str, name: str,
     f.write(resp.content)
 
 #---
-
+    
 def download_git_folder(user: str, repo: str, repo_folder: str,
                         server: str = "github.com",
                         branch: str = "main",
@@ -185,8 +186,67 @@ def download_git_folder(user: str, repo: str, repo_folder: str,
 
       download_git_file(user, repo, repo_folder, item['name'],
                         server = server, branch = branch, folder = folder)
+#############################
+# QD
+#############################
+    elif item['contentType'] == 'symlink_file':
+      repo_url = f"https://{server}/{user}/{repo}/blob/{branch}"
+      symlink_url = f"{repo_url}/{repo_folder}/{item['name']}"
 
+      resp = requests.get(symlink_url)
+      if resp.status_code != 200:
+        raise requests.exceptions.RequestException(
+          f"Failed to retrieve folder({repo_folder}). Status code: {resp.status_code}")
+
+
+      path = json.loads(resp.content)["payload"]["blob"]['rawLines'][0].split('/')
+      folder_list = repo_folder.split('/')
+
+      for  p in path[:-1]:
+        if p == "..":
+          if not folder_list: raise requests.exceptions.RequestException(f"SYMLINK ERROR")
+          folder_list.pop()
+        else:
+          folder_list.append(p)
+
+        if folder_list:
+          resp = requests.get(f"{repo_url}/{'/'.join(folder_list)}")
+
+          if resp.status_code != 200:
+            if len(folder_list) == 1:
+              resp = requests.get(f'{repo_url.replace("blob", "tree")}') #ToDo la dirección no puede contener blob!
+            else:
+              resp = requests.get(f"{repo_url}/{'/'.join(folder_list[:-1])}")
+
+            item = find_dict(json.loads(resp.content)["payload"]["tree"]["items"], 'name', folder_list[-1])
+            if not item: raise requests.exceptions.RequestException(f"SYMLINK ERROR")
+            if item["contentType"]!='submodule': raise requests.exceptions.RequestException(f"SYMLINK ERROR")
+
+            #ToDo: no puede contener la palabra tree
+            repo_url_list = item["submoduleUrl"].split("/")
+            repo_url_list.insert(-1,"blob")
+            repo_url = "/".join(repo_url_list)
+            folder_list = []
+
+      if folder_list:
+        file_url = f"{repo_url}/{'/'.join(folder_list)}/{path[-1]}"
+      else:
+        file_url = f"{repo_url}/{path[-1]}"
+
+      
+      resp = requests.get(file_url.replace("blob","raw"))
+      if resp.status_code != 200:
+        raise requests.exceptions.RequestException(
+          f"Failed to retrieve file ({repo_folder}/{name}). Status code: {resp.status_code}")
+
+      with open(f"{folder}/{path[-1]}","wb") as f:
+        f.write(resp.content)
+
+    ##############################
+    # ToDo: elif sublmodule
+#############################
     else:
       download_git_folder(user, repo, f"{repo_folder}/{item['name']}",
                           server = server, branch = branch,
                           folder = f"{folder}/{item['name']}")
+      

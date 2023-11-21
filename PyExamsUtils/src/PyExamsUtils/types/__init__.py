@@ -14,4 +14,4 @@ TODO:
 '''
 
 from ._types import LockFunc, Struct, ConstStruct, FixStruct, ListStruct
-from ._functions import remove_copies
+from ._functions import remove_copies, find_dict
