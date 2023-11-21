@@ -1,4 +1,7 @@
 ## ToDo:
+* Compilador de la libreria
+* PROBAR ENLACES A BIN
+
 * Notebooks:
   * Meter enlaces dinamicos al contenido de una carpeta en git. Scripts y extensions.
   * Actualizar todos los enlaces de los notebooks de la rama de desarrollo a Master
