@@ -1,0 +1,3 @@
+#This file is used to include non python code such as images
+#It can be substitued in pyproject.toml
+#https://packaging.python.org/en/latest/guides/using-manifest-in/#manifest-in-commands

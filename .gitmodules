@@ -1,4 +1,6 @@
-[submodule "bin"]
-	path = bin
-	url = https://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@github.com/Mr-McGL/RExamsUtilsBinaries.git
-	branch = main
+[submodule "extern/bin"]
+	path = extern/bin
+	url = https://github.com/Mr-McGL/RExamsUtilsBinaries.git
+[submodule "extern/scripts_and_ext"]
+	path = extern/scripts_and_ext
+	url = https://gist.github.com/661ae7e50a1cfe7dfd5c0b23216bf0c3.git
