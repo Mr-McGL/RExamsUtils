@@ -14,3 +14,18 @@ def remove_copies(lst: list):
       remove_copies([1, 2, 2, 3, 4, 4, 5])
   """
   return list(sorted(set(lst), key=lst.index))
+
+
+def find_dict(lst, key, value):
+    """
+    Find the dictionary in a list that has a specific value for a given key.
+
+    Parameters:
+    - lst (list): List of dictionaries.
+    - key (str): The key to search for.
+    - value: The value to match for the given key.
+
+    Returns:
+    - dict or None: The dictionary that matches the criteria, or None if not found.
+    """
+    return next((d for d in lst if d.get(key) == value), None)
