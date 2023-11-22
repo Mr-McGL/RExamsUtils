@@ -1,0 +1,122 @@
+#https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+#https://packaging.python.org/en/latest/specifications/entry-points/#entry-points
+[build-system]
+requires = ["setuptools >=  67.4","wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyexmas"
+#dynamic = ["version", "description", "optional-dependencies"] provided by other tools
+version = "0.1.0"
+#license = {text = "MIT License"}
+#license = {file = "LICNESE", content-type = "text/plain"} #do not work?
+license = {file = "LICENSE.txt"}
+
+authors = [{name = "Marcos García-Lorenzo", email = "marcos.garcia@urjc.es"}]
+maintainers = [{name = "Marcos García-Lorenzo", email = "marcos.garcia@urjc.es"}]
+
+description = "Utils for developmenting R/exams in Colab Notebooks"
+readme = {file = "README.md", content-type = "text/markdown"} 
+keywords = ["Jupyter", "Notebook", "R/exams"]
+
+
+#https://r-forge.r-project.org/softwaremap/trove_list.php?cat=c&form_cat=6&discrim=229,10
+classifiers = [
+  'Programming Language :: Python :: 3',
+  "Programming Language :: Python :: 3 :: Only",
+  'Operating System :: OS Independent',
+  "License :: OSI Approved :: MIT License",
+  'Intended Audience :: Developers',
+  "Intended Audience :: Education",
+
+  # How mature is this project? https://martin-thoma.com/software-development-stages/
+  # 1 - Planning
+  # 2 - Pre-Alpha
+  # 3 - Alpha
+  # 4 - Beta
+  # 5 - Production/Stable
+  # 6 - Mature
+  # 7 - Inactive
+  #'Development Status :: 1 - Planning',
+  #'Development Status :: Development',
+  'Development Status :: 2 - Pre-Alpha'
+]
+
+requires-python = ">=3.7"
+dependencies = [
+  'requests >= 2.25',
+  'importlib-metadata', 
+  #_run
+  'ipython']
+
+  # TODO
+  #   * optional
+  #'pip == 23.0.1'
+
+
+[project.urls]
+innovation = "https://gestion2.urjc.es/pdi/grupos-innovacion/mimic"
+research = "https://vg-lab.es/"
+affiliation = "https://www.urjc.es/"
+#homepage = "https://example.com"
+#documentation = "https://readthedocs.org"
+#repository = "https://github.com/me/spam.git"
+#changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+#Autodescovery
+#https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+#https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+#[tool.setuptools]
+#packages = ["pyexams"]
+#package-dir = {"pyexams" = "src/pyexams"}
+#package-dir = {"" = "src"}
+# By default, include-package-data is true in pyproject.toml, so you do
+# NOT have to specify this line.
+# include-package-data = true
+#<or>
+#[tool.setuptools.packages]
+#find = {}
+#find = {namespaces = false} 
+#<or>
+#[tool.setuptools.packages.find]
+#where = ["src"] 
+#include = ["pyexams*"]  # package names should match these glob patterns (["*"] by default)
+#namespaces = false
+##exclude = ["my_package.tests*"]  # exclude packages matching these glob patterns (empty by default)
+#To avoid pkg.namespace from being added to your package list you can set namespaces = false. 
+# This will prevent any folder without an __init__.py file from being scanned.
+#namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
+
+#If version is dinamic
+#[tool.setuptools.dynamic]
+#version = {attr = "my_package.VERSION"}
+
+
+#[tool.setuptools.package-data]
+#https://setuptools.pypa.io/en/latest/userguide/datafiles.html
+#mypkg = ["*.txt", "*.rst"]
+
+#[tool.setuptools.exclude-package-data]
+#mypkg = [".gitattributes"]
+
+##################
+
+#[project.urls]
+#homepage = "https://example.com"
+#documentation = "https://readthedocs.org"
+#repository = "https://github.com/me/spam.git"
+#changelog = "https://github.com/me/spam/blob/master/CHANGELOG.md"
+
+
+#https://packaging.python.org/en/latest/specifications/entry-points/#entry-points
+#[project.scripts]
+#spam-cli = "spam:main_cli"
+#[project.gui-scripts]
+#spam-gui = "spam:main_gui"
+#[project.entry-points."spam.magical"]
+#tomatoes = "spam:main_tomatoes"
+
+#[project.optional-dependencies]
+#gui = ["PyQt5"]
+#cli = ["rich","click",]
