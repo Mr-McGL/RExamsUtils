@@ -55,9 +55,9 @@ dependencies = [
 
 
 [project.urls]
-innovation = "https://gestion2.urjc.es/pdi/grupos-innovacion/mimic"
-research = "https://vg-lab.es/"
-affiliation = ""https://www.urjc.es/""
+#innovation = "https://gestion2.urjc.es/pdi/grupos-innovacion/mimic"
+#research = "https://vg-lab.es/"
+affiliation = "https://www.urjc.es/"
 #homepage = "https://example.com"
 #documentation = "https://readthedocs.org"
 #repository = "https://github.com/me/spam.git"
