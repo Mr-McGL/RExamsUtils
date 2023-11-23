@@ -27,7 +27,7 @@ class LockFunc():
 
 
 class Struct(dict): 
-  def __getattr__(self, name): return self[name]
+  def __getattr__(self, name): return self.get(name) # self[name] ToDo: Can be done better. This option removes errors
   def __setattr__(self, name, value): self[name] = value
 
 
