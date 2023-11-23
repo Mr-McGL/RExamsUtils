@@ -10,7 +10,7 @@ name = "pyexams"
 version = "0.1.0"
 #license = {text = "MIT License"}
 #license = {file = "LICNESE", content-type = "text/plain"} #do not work?
-license = {file = "LICENSE.txt"}
+license = {file = "LICENSE"}
 
 authors = [{name = "Marcos García-Lorenzo", email = "marcos.garcia@urjc.es"}]
 maintainers = [{name = "Marcos García-Lorenzo", email = "marcos.garcia@urjc.es"}]
