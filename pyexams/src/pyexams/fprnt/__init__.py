@@ -15,7 +15,7 @@ TODO:
 
 from  ._fprnt import (format, fgColor, bgColor, special, 
                       fprnt, fprntNNL, 
-                      fgvColor, bgvColor, fgRGB, 
+                      fgvColor, bgvColor, fgRGB, bgRGB,
                       setFormat)
 
 
