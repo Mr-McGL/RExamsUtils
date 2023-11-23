@@ -1,6 +1,8 @@
 ## ToDo:
 * Compilador de la libreria
   * añadir la descarga de este modulo en el script de configuración
+* Los ficheros de licencias del repositorio y de la libería no concuerdan.
+
 
 * Notebooks:
   * Meter enlaces dinamicos al contenido de una carpeta en git. Scripts y extensions.
