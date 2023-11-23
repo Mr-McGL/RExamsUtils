@@ -8,13 +8,13 @@ perform additional actions such as changing script file permissions and loading
 extensions.
 
 Usage:
-  1. %run download_sripts_and_extensions [arguments]
-  2. %sysrun download_sripts_and_extensions [arguments] # if already downloaded
+  1. %run download_rexams_utils [arguments]
+  2. %sysrun download_rexams_utils [arguments] # if already downloaded
 
   Not recommended options
-  3. !python download_sripts_and_extensions.py [arguments]
-  4. !chmod -x download_sripts_and_extensions.py  #run it onces
-     !./download_sripts_and_extensions.py [arguments]
+  3. !python download_rexams_utils.py [arguments]
+  4. !chmod -x download_rexams_utils.py  #run it onces
+     !./download_rexams_utils.py [arguments]
 
 Arguments:
   --no-scripts, -ns:
@@ -23,14 +23,18 @@ Arguments:
       Exclude extension downloads.
   --preserve-script-permissions, -psp:
       Preserve execution permissions for script files. Ignoder if `--no-scripts`.
-  --no-load-extensions, -nld:
+  --skip-load-extensions, -sld:
       Skip loading previously downloaded extensions. Ignoder if `--no-extension`.
+  --skip-install-packages, -sip,
+      Skip installing previously downloaded packages.
+  --no-pkgs, -np, 
+      Exclude auxiliar package downloads.
 
 
 Example Usage:
-  %run download_sripts_and_extensions.py --no-scripts
-  %run download_sripts_and_extensions.py --no-extension --preserve-script-permissions
-  %run download_sripts_and_extensions --no-load-extensions
+  %run download_rexams_utils.py --no-scripts
+  %run download_rexams_utils.py --no-extension --preserve-script-permissions
+  %run download_rexams_utils --no-load-extensions
 
 For more details and usage instructions, please refer to the script's
 repository and the R/exams documentation.
@@ -48,7 +52,7 @@ Additional Info
 
   @Version: 0.1.0
   @Date Created: October 19th, 2023
-  @Date Modified: November 21, 2023
+  @Date Modified: November 23, 2023
   @Status: 2 - Pre-Alpha
 
   @Copyright: © 2023 by Marcos García-Lorenzo (VGLAB - MIMIC - URJC). All rights reserved.
@@ -57,13 +61,13 @@ Additional Info
 # @Links: {'MIMIC': 'https://gestion2.urjc.es/pdi/grupos-innovacion/mimic', 'VG-LAB': 'https://vg-lab.es/', 'URJC': 'https://www.urjc.es', 'R/exams': 'https://www.r-exams.org/', 'Project-URL': 'https://github.com/Mr-McGL/RExamsUtils'}
 
 __metadata__ = dict(
-		__name__ = "download_sripts_and_extensions",
+		__name__ = "download_rexams_utils",
 		__project_name__ = "RExamsUtils",
 		__keywords__ = ['Jupyter', 'Google Colab', 'R/exams'],
 		__description__ = "Script for downloading scripts and extensions to run R/exams in Google Colab.",
 		__version__ = "0.1.0",
 		__date_created__ = "October 19th, 2023",
-		__date_modified__ = "November 21, 2023",
+		__date_modified__ = "November 23, 2023",
 		__status__ = "2 - Pre-Alpha",
 		__license__ = {'text': 'MIT License'},
 		__copyright__ = "© 2023 by Marcos García-Lorenzo (VGLAB - MIMIC - URJC). All rights reserved.",
@@ -279,7 +283,7 @@ def download_git_folder(user: str, repo: str, repo_folder: str,
       else:
         file_url = f"{repo_url}/{path[-1]}"
 
-      
+
       resp = requests.get(file_url.replace("blob","raw"))
       if resp.status_code != 200:
         raise requests.exceptions.RequestException(
@@ -295,7 +299,7 @@ def download_git_folder(user: str, repo: str, repo_folder: str,
       download_git_folder(user, repo, f"{repo_folder}/{item['name']}",
                           server = server, branch = branch,
                           folder = f"{folder}/{item['name']}")
-      
+
 def find_dict(lst, key, value):
     """
     Find the dictionary in a list that has a specific value for a given key.
@@ -336,21 +340,31 @@ if __name__ == '__main__':
                   help="Exclude script downloads.")
   ap.add_argument('--no-extension', '-ne', dest='download_ext', action='store_false',
                   help="Exclude extension downloads.")
+  ap.add_argument('--no-pkgs', '-np', dest='download_pkgs', action='store_false',
+                  help="Exclude auxiliar package downloads.")
+  
   ap.add_argument('--preserve-script-permissions', '-psp',
                   dest='change_permissions', action='store_false',
                   help="Preserve execution permissions for script files")
-  ap.add_argument('--no-load-extensions', '-nld',
+  ap.add_argument('--skip-load-extensions', '-sld',
                   dest='load_extensions', action='store_false',
                   help="Skip loading previously downloaded extensions.")
+  ap.add_argument('--skip-install-packages', '-sip',
+                  dest='install_pkgs', action='store_false',
+                  help="Skip installing previously downloaded packages.")
+
+
 
   ap.set_defaults(download_scripts=True, download_ext=True,
-                  change_permissions=True, load_extensions=True)
+                  change_permissions=True, load_extensions=True,
+                  download_pkgs=True, install_pkgs = True)
 
   args = ap.parse_args()
 
   swd = get_ipython().starting_dir
   script_folder = f"{swd}/scripts"
   ext_folder = f"{swd}/extensions"
+  pkgs_folder = f"{swd}/pkgs"
   py_file_extensions = [".py", ".PY", ".ipynb", ".IPYNB"]
 
   if args.download_scripts:
@@ -378,3 +392,16 @@ if __name__ == '__main__':
         if any(f.endswith(ext) for ext in py_file_extensions):
           print(f"* \x1b[32m{f}\x1b[0m", flush=True)
           reload_ext(os.path.splitext(f)[0])
+
+
+  if args.download_pkgs:
+    print(f"\x1B[1m\x1B[4m\x1b[34m\nDownloading packages...\x1b[0m", flush=True)
+    download_git_folder("Mr-McGL", "RExamsUtilsBinaries", "pkgs",
+                      branch="main", folder = pkgs_folder)
+
+    if args.install_pkgs:
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nLoading packages...\x1b[0m", flush=True)
+      for f in os.listdir(pkgs_folder):
+        if f.endswith(".whl"):    
+          print(f"* \x1b[32m{f}\x1b[0m", flush=True)
+          run(f"pip install --force-reinstall {pkgs_folder}/{f}")
