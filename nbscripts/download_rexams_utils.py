@@ -404,4 +404,5 @@ if __name__ == '__main__':
       for f in os.listdir(pkgs_folder):
         if f.endswith(".whl"):    
           print(f"* \x1b[32m{f}\x1b[0m", flush=True)
-          run(f"pip install --force-reinstall {pkgs_folder}/{f}")
+          #run(f"pip install --force-reinstall {pkgs_folder}/{f}")
+          run(f"pip install {pkgs_folder}/{f}")

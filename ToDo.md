@@ -1,8 +1,6 @@
 ## ToDo:
-* Compilador de la libreria
-  * añadir la descarga de este modulo en el script de configuración
 * Los ficheros de licencias del repositorio y de la libería no concuerdan.
-
+* Buscar todos en ficheros y traerlos aquí.
 
 * Notebooks:
   * Meter enlaces dinamicos al contenido de una carpeta en git. Scripts y extensions.
@@ -18,11 +16,10 @@
   
   * Tutoriales:
     * Banco de ejercicios
-    * Creaciçon de templates
+    * Creación de templates
     * Configuración de examenes
     * Aleatorización
     * Uso de imagenes.
-    * Aleatorización
     * NOPs
 
 * Módudulos, librerías y scripts:
