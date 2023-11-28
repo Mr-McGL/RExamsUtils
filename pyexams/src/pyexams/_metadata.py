@@ -1,15 +1,15 @@
 #https://peps.python.org/pep-0621/
 
 #This variables will be destroy at the en of the file
-_na             = "N.A."
 _lGetName       = lambda author_email: author_email[0:author_email.find("<")-1]\
                     if author_email.find("<") != -1 else ""
 _lGetEmail      = lambda author_email: author_email[author_email.find("<")+1:-1]\
                     if author_email.find("<") != -1 else author_email
+_na             = "N.A."
 
 try:
   from importlib import metadata as __dl_metadata
-  _md = __dl_metadata.metadata("nbutils")
+  _md = __dl_metadata.metadata("pyexams")
   del __dl_metadata
 except:
   _md = {}
