@@ -305,6 +305,7 @@ def install_rexams(demo_path: str | None = None, rdev:bool = False,
   import rpy2 #Cannot guarantee it is installed up to this point.
   rpy2.rinterface_lib.callbacks.consolewrite_warnerror = warn_error_print
 
+  warn_error_print.new_line = True
   consolewrite_warnerror_default = rpy2.rinterface_lib.callbacks.consolewrite_warnerror
   try:
     if not rdev:
