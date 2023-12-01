@@ -69,7 +69,7 @@ def cell_magic(magic: str, line: str = '', cell: str = ''):
           Default is an empty string.
 
   Usage:
-      cell_magic("%%html", line="bgcolor='lightblue'", cell="<h1>Hello, Jupyter!</h1>")
+      cell_magic("html", line="bgcolor='lightblue'", cell="<h1>Hello, Jupyter!</h1>")
   """
   __ip_get_ipython().run_cell_magic(magic, line, cell)
 
@@ -84,6 +84,6 @@ def line_magic(magic: str, line: str = ''):
       line (str, optional): The line magic command to be executed.
 
   Usage:
-      line_magic("%matplotlib inline")
+      line_magic("matplotlib", "inline")
   """
   __ip_get_ipython().run_line_magic(magic, line)

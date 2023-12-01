@@ -12,7 +12,6 @@
 
     1. %run init_rexams [arguments]
     2. %sysrun init_rexams [arguments]
-
     Not recommended options
     3. !python init_rexams.py [arguments]
     4. !chmod -x init_rexams.py  #run it onces
@@ -209,7 +208,7 @@ def cell_magic(magic: str, line: str = '', cell: str = ''):
           Default is an empty string.
 
   Usage:
-      cell_magic("%%html", line="bgcolor='lightblue'", cell="<h1>Hello, Jupyter!</h1>")
+      cell_magic("html", line="bgcolor='lightblue'", cell="<h1>Hello, Jupyter!</h1>")
   """
   get_ipython().run_cell_magic(magic, line, cell)
 
@@ -224,9 +223,46 @@ def line_magic(magic: str, line: str = ''):
       line (str, optional): The line magic command to be executed.
 
   Usage:
-      cell_line("%matplotlib inline")
+      cell_line("matplotlib", "inline")
   """
   get_ipython().run_line_magic(magic, line)
+
+#--
+
+def warn_error_print(msg: str) -> None:
+    """
+    Print warning/error messages with a formatted prefix.
+
+    This function prints the provided message with a distinctive prefix indicating
+    a warning or error. The message can include newline characters for multiline output.
+
+    Parameters:
+        - msg (str): The message to be printed.
+
+    Example:
+        >>> warn_error_print("This is a warning.")
+        [R]: This is a warning.
+
+    Note:
+        The formatting includes color-coding and styling for clear identification of warnings or errors.
+    """
+    if not msg:
+        return
+
+    def print_line(m: str, add_prefix: bool, end: str = "\n"):
+        prefix = "\x1b[1m\x1b[32m[R]: \x1b[0m" if add_prefix else ""
+        print(f"{prefix}\x1b[3m\x1B[1m\x1b[35m{m}\x1b[0m", end=end)
+
+    lines = msg.split('\n')
+    add_prefix = warn_error_print.new_line
+    for line in enumerate(lines[:-1]):
+        print_line(line, add_prefix)
+        add_prefix = True
+
+    if lines[-1]:
+        print_line(lines[-1], add_prefix, end='')
+
+    warn_error_print.new_line = lines[-1] == ''
 
 
 # Install rpy2 + versión check
@@ -265,40 +301,48 @@ def install_rexams(demo_path: str | None = None, rdev:bool = False,
                    nops_support: bool = True, pypandoc: bool = True,
                    jedi: bool = True, qti_demo = False):
   print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling R/exams\x1b[0m", flush=True)
-  if not rdev:
-    run_R('install.packages("exams", dependencies = TRUE)')
-  else:
-    run_R('install.packages("exams", repos = "https://R-Forge.R-project.org")')
+  
+  import rpy2 #Cannot guarantee it is installed up to this point.
+  rpy2.rinterface_lib.callbacks.consolewrite_warnerror = warn_error_print
 
-  print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling TinyTeX for supporting PDF files\x1b[0m")
-  run_R('tinytex::install_tinytex()')
+  consolewrite_warnerror_default = rpy2.rinterface_lib.callbacks.consolewrite_warnerror
+  try:
+    if not rdev:
+      run_R('install.packages("exams", dependencies = TRUE)')
+    else:
+      run_R('install.packages("exams", repos = "https://R-Forge.R-project.org")')
 
-  if nops_support:
-    print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling packages for NOPS support.\x1b[0m")
-    run("apt-get install pdftk imagemagick")
+    print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling TinyTeX for supporting PDF files\x1b[0m")
+    run_R('tinytex::install_tinytex()')
 
-  if pypandoc:
-    print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling PyPandoc.\x1b[0m")
-    run("pip install pandoc -U")
+    if nops_support:
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling packages for NOPS support.\x1b[0m")
+      run("apt-get install pdftk imagemagick")
 
-  if jedi:
-    print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling JEDI.\x1b[0m")
-    run("pip install jedi")
+    if pypandoc:
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling PyPandoc.\x1b[0m")
+      run("pip install pandoc -U")
 
-  print(f"\x1B[1m\x1B[4m\x1b[34m\nImporting exams into the R environment.\x1b[0m")
-  run_R('library("exams")')
+    if jedi:
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling JEDI.\x1b[0m")
+      run("pip install jedi")
 
-  if demo_path is not None:
-    if not os.path.exists(demo_path):
-      os.makedirs(demo_path)
+    print(f"\x1B[1m\x1B[4m\x1b[34m\nImporting exams into the R environment.\x1b[0m")
+    run_R('library("exams")')
 
-    print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling demo files at: '{demo_path}'.\x1b[0m")
-    writers = '"exams2html", "exams2pdf", "exams2moodle"'
-    if nops_support: writers += ', "exams2nops"'
-    if qti_demo: writers += ', "exams2qti12", "exams2qti21"'
+    if demo_path is not None:
+      if not os.path.exists(demo_path):
+        os.makedirs(demo_path)
 
-    run_R(f'exams_skeleton(dir = "{demo_path}", markup = "markdown", writer = c({writers}));')
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling demo files at: '{demo_path}'.\x1b[0m")
+      writers = '"exams2html", "exams2pdf", "exams2moodle"'
+      if nops_support: writers += ', "exams2nops"'
+      if qti_demo: writers += ', "exams2qti12", "exams2qti21"'
 
+      run_R(f'exams_skeleton(dir = "{demo_path}", markup = "markdown", writer = c({writers}));')
+  
+  finally:
+    rpy2.rinterface_lib.callbacks.consolewrite_warnerror = consolewrite_warnerror_default
 
 if __name__ == '__main__':
 
