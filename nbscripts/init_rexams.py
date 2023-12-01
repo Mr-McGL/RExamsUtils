@@ -255,7 +255,7 @@ def warn_error_print(msg: str) -> None:
 
     lines = msg.split('\n')
     add_prefix = warn_error_print.new_line
-    for line in enumerate(lines[:-1]):
+    for line in lines[:-1]:
         print_line(line, add_prefix)
         add_prefix = True
 
