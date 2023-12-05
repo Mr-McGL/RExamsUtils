@@ -25,11 +25,14 @@ Arguments:
       Preserve execution permissions for script files. Ignoder if `--no-scripts`.
   --skip-load-extensions, -sld:
       Skip loading previously downloaded extensions. Ignoder if `--no-extension`.
-  --skip-install-packages, -sip,
+  --skip-install-packages, -sip:
       Skip installing previously downloaded packages.
-  --no-pkgs, -np, 
+  --no-pkgs, -np:
       Exclude auxiliar package downloads.
-
+  --height, -hh:
+      Height of the output cell.
+	--collapsible, -cl:
+      Enable collapsible output.
 
 Example Usage:
   %run download_rexams_utils.py --no-scripts
@@ -52,7 +55,7 @@ Additional Info
 
   @Version: 0.1.0
   @Date Created: October 19th, 2023
-  @Date Modified: November 23, 2023
+  @Date Modified: December 5, 2023
   @Status: 2 - Pre-Alpha
 
   @Copyright: © 2023 by Marcos García-Lorenzo (VGLAB - MIMIC - URJC). All rights reserved.
@@ -67,7 +70,7 @@ __metadata__ = dict(
 		__description__ = "Script for downloading scripts and extensions to run R/exams in Google Colab.",
 		__version__ = "0.1.0",
 		__date_created__ = "October 19th, 2023",
-		__date_modified__ = "November 23, 2023",
+		__date_modified__ = "December 5, 2023",
 		__status__ = "2 - Pre-Alpha",
 		__license__ = {'text': 'MIT License'},
 		__copyright__ = "© 2023 by Marcos García-Lorenzo (VGLAB - MIMIC - URJC). All rights reserved.",
@@ -88,9 +91,184 @@ import sys
 import subprocess
 from IPython import get_ipython
 
+from typing import Sequence
+import ipywidgets as widgets
+
 import argparse
 
-#---
+##--------
+class StyledAccordion(widgets.Accordion):
+  """
+    A custom accordion widget with additional styling options.
+
+    Attributes:
+        Shares ipywidget.Accordion attributes.
+
+    Note:
+        * The header style can be defined during the class initialization or using
+          the *set_style* method.
+
+    Usage:
+        styled_accordion = StyledAccordion(
+            children=[widgets.IntSlider(max=200, value=100)],
+            titles=["Title"],
+            bgcolor="rgba(100,100,100,250)", padding = "5px",
+            tcolor="darkgreen", tbgcolor="white",
+            tfweight="bold", tfstyle="italic", tffamly="Arial", tfsize="200%",
+            thcolor="green", thbgcolor="gray",
+            thfweight="900", thfstyle="oblique", thffamly="sans-serif", thfsize="50px"
+        )
+        display(styled_accordion)
+  """
+
+  _style = """
+<style>
+  .{styleName} > .p-Accordion-child > .p-Collapse-header {{
+    {padding};{tcolor};{tbgcolor};{tfweight};{tfstyle};{tffamly};{tfsize};}}
+  .{styleName} > .p-Accordion-child > .p-Collapse-header:hover {{
+      {thcolor};{thbgcolor};{thfweight};{thfstyle};{thffamly};{thfsize};}}
+  .{styleName} > .p-Accordion-child > .p-Collapse-contents {{
+    {bgcolor};
+    }}
+</style>
+"""
+
+  def __init__(self,
+               children:  Sequence[widgets.Widget] | None = None,
+               titles:    Sequence[str] | None            = None,
+               collapse:  bool                        = True,
+               #Format
+               bgcolor:   str = '',  padding:  str = '',
+               #Header style
+               tcolor:    str = '',  tbgcolor:  str = '',  tfweight:  str = '',
+               tfstyle:   str = '',  tffamly:   str = '',  tfsize:    str = '',
+               #Header: hover
+               thcolor:   str = '',  thbgcolor: str = '',  thfweight: str = '',
+               thfstyle:  str = '',  thffamly:  str = '',  thfsize:   str = '',
+               #Accordion options
+               **kwargs):
+    """
+    Initializes the StyledAccordion instance.
+
+    Parameters:
+        children (Sequence[widgets.Widget] | None, optional): Child widgets to be added to the Accordion.
+            Default value: None.
+        titles (Sequence[str] | None, optional): Titles for the accordion sections. Default value: None.
+        collapse (bool, optional): Whether to initially collapse all sections. Default value: True
+        bgcolor (str, optional): Background color of the accordion. Default value: ''
+        padding (str, optional): Accordion header padding. Default value: ''
+        tcolor (str, optional): Text color for accordion headers. Default value: ''
+        tbgcolor (str, optional): Background color for accordion headers. Default value: ''
+        tfweight (str, optional): Font weight for accordion headers. Default value: ''
+        tfstyle (str, optional): Font style for accordion headers. Default value: ''
+        tffamly (str, optional): Font family for accordion headers. Default value: ''
+        tfsize (str, optional): Font size for accordion headers. Default value: ''
+        thcolor (str, optional): Text color for accordion headers on hover. Default value: ''
+        thbgcolor (str, optional): Background color for accordion headers on hover. Default value: ''
+        thfweight (str, optional): Font weight for accordion headers on hover. Default value: ''
+        thfstyle (str, optional): Font style for accordion headers on hover. Default value: ''
+        thffamly (str, optional): Font family for accordion headers on hover. Default value: ''
+        thfsize (str, optional): Font size for accordion headers on hover. Default value: ''
+        **kwargs: Additional ipywidget.Accordion parameters.
+    """
+    
+    super().__init__(children=children, **kwargs)
+
+    if collapse: self.selected_index = None
+
+    if titles is None: titles = tuple()
+    for i, t in enumerate(titles): self.set_title(i, t)
+
+    self._id = "accordion_" + str(id(self))
+    self.add_class(self._id)
+    self.set_style(bgcolor, padding, 
+                   tcolor, tbgcolor, tfweight, tfstyle, tffamly, tfsize,
+                   thcolor, thbgcolor, thfweight, thfstyle, thffamly, thfsize)
+
+  def set_style(self,
+        bgcolor:   str | None = None,  padding:   str | None = None,
+        tcolor:    str | None = None,  tbgcolor:  str | None = None,  tfweight:  str | None = None,
+        tfstyle:   str | None = None,  tffamly:   str | None = None,  tfsize:    str | None = None,
+        thcolor:   str | None = None,  thbgcolor: str | None = None,  thfweight: str | None = None,
+        thfstyle:  str | None = None,  thffamly:  str | None = None,  thfsize:   str | None = None):
+    """
+    Sets the styles for the Accordion.
+
+    Parameters:
+        bgcolor (str | None, optional): Background color of the accordion. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        padding (str, optional): Accordion header padding. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        tcolor (str | None, optional): Text color for accordion headers. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        tbgcolor (str | None, optional): Background color for accordion headers. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        tfweight (str | None, optional): Font weight for accordion headers. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        tfstyle (str | None, optional): Font style for accordion headers. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        tffamly (str | None, optional): Font family for accordion headers. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        tfsize (str | None, optional): Font size for accordion headers. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        thcolor (str | None, optional): Text color for accordion headers on hover. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        thbgcolor (str | None, optional): Background color for accordion headers on hover. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        thfweight (str | None, optional): Font weight for accordion headers on hover. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        thfstyle (str | None, optional): Font style for accordion headers on hover. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        thffamly (str | None, optional): Font family for accordion headers on hover. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+        thfsize (str | None, optional): Font size for accordion headers on hover. None keeps the previous value.
+            '' returns to the ipywidget.Accordion default value. Default value: None.
+
+    Returns:
+        None
+    """
+
+    def _set(val, style):
+      return '' if not val else f'{style}{val}'
+
+    if bgcolor is not None:   self._bgcolor   = _set(bgcolor, 'background-color:')
+    if padding is not None:   self._padding   = _set(padding, 'padding:')
+    if tcolor is not None:    self._tcolor    = _set(tcolor, 'color:')
+    if tbgcolor is not None:  self._tbgcolor  = _set(tbgcolor, 'background-color:')
+    if tfweight is not None:  self._tfweight  = _set(tfweight, 'font-weight:')
+    if tfstyle is not None:   self._tfstyle   = _set(tfstyle, 'font-style:')
+    if tffamly is not None:   self._tffamly   = _set(tffamly, 'font-family:')
+    if tfsize is not None:    self._tfsize    = _set(tfsize, 'font-size:')
+    if thcolor is not None:   self._thcolor   = _set(thcolor, 'color:')
+    if thbgcolor is not None: self._thbgcolor = _set(thbgcolor, 'background-color:')
+    if thfweight is not None: self._thfweight = _set(thfweight, 'font-weight:')
+    if thfstyle is not None:  self._thfstyle  = _set(thfstyle, 'font-style:')
+    if thffamly is not None:  self._thffamly  = _set(thffamly, 'font-family:')
+    if thfsize is not None:   self._thfsize   = _set(thfsize, 'font-size:')
+
+    self._set_style()
+
+  def _set_style(self):
+    """
+    Apply the defined style to the accordion.
+    """
+    style = StyledAccordion._style.format(
+      styleName = self._id, bgcolor = self._bgcolor, padding = self._padding,
+      tcolor = self._tcolor, tbgcolor = self._tbgcolor, tfweight = self._tfweight,
+      tfstyle = self._tfstyle,  tffamly = self._tffamly, tfsize = self._tfsize,
+      thcolor = self._thcolor, thbgcolor = self._thbgcolor, thfweight = self._thfweight,
+      thfstyle = self._thfstyle, thffamly = self._thffamly, thfsize = self._thfsize)
+    self._style_widget = widgets.HTML(style)
+
+  #https://ipython.readthedocs.io/en/stable/config/integrating.html
+  def _ipython_display_(self):
+    """
+    Display the styled accordion in Jupyter Notebook.
+    """
+    display(self._style_widget)
+    super()._ipython_display_()
+
+##-------
 
 def reload_ext(ext: str):
   """Reload a Jupyter notebook extension.
@@ -190,6 +368,7 @@ def download_git_file(user: str, repo: str, repo_folder: str, name: str,
   with open(f"{folder}/{name}","wb") as f:
     f.write(resp.content)
 
+
 #---
 
 def download_git_folder(user: str, repo: str, repo_folder: str,
@@ -237,7 +416,7 @@ def download_git_folder(user: str, repo: str, repo_folder: str,
       download_git_file(user, repo, repo_folder, item['name'],
                         server = server, branch = branch, folder = folder)
 #############################
-# QD
+# ToDo: QD+ Not valid in all cases
 #############################
     elif item['contentType'] == 'symlink_file':
       repo_url = f"https://{server}/{user}/{repo}/blob/{branch}"
@@ -294,7 +473,7 @@ def download_git_folder(user: str, repo: str, repo_folder: str,
 
     ##############################
     # ToDo: elif sublmodule
-#############################
+    #############################
     else:
       download_git_folder(user, repo, f"{repo_folder}/{item['name']}",
                           server = server, branch = branch,
@@ -342,7 +521,7 @@ if __name__ == '__main__':
                   help="Exclude extension downloads.")
   ap.add_argument('--no-pkgs', '-np', dest='download_pkgs', action='store_false',
                   help="Exclude auxiliar package downloads.")
-  
+
   ap.add_argument('--preserve-script-permissions', '-psp',
                   dest='change_permissions', action='store_false',
                   help="Preserve execution permissions for script files")
@@ -352,57 +531,75 @@ if __name__ == '__main__':
   ap.add_argument('--skip-install-packages', '-sip',
                   dest='install_pkgs', action='store_false',
                   help="Skip installing previously downloaded packages.")
-
-
-
+  
+  ap.add_argument('--height', '-hh', help='Height of the output cell.')
+  ap.add_argument('--collapsible', '-cl', action='store_true', dest='collapsible', help='Enable collapsible output.')
+  ap.set_defaults(collapsible = False)
+	
   ap.set_defaults(download_scripts=True, download_ext=True,
                   change_permissions=True, load_extensions=True,
-                  download_pkgs=True, install_pkgs = True)
+                  download_pkgs=True, install_pkgs = True,
+                  collapsible = False)
 
   args = ap.parse_args()
 
-  swd = get_ipython().starting_dir
-  script_folder = f"{swd}/scripts"
-  ext_folder = f"{swd}/extensions"
-  pkgs_folder = f"{swd}/pkgs"
-  py_file_extensions = [".py", ".PY", ".ipynb", ".IPYNB"]
+  #Output
+  layout = {} 
+  if args.height: layout['height'] = args.height
+	
+  out  = widgets.Output()
+  wdgt = widgets.VBox([out], layout = widgets.Layout(**layout))
+  if args.collapsible: 		
+    display(StyledAccordion([wdgt], titles = [r"Show/Hide"], collapse = False, 
+                            tcolor = "#FFFFFF", tbgcolor="#777777", 
+                            thfstyle = "italic",thfweight="400",
+                            tfsize="85%", padding = "5px"))
+  else:
+    display(wdgt)
 
-  if args.download_scripts:
-    print(f"\x1B[1m\x1B[4m\x1b[34m\nDownloading scripts...\x1b[0m", flush=True)
-    download_git_folder("Mr-McGL", "RExamsUtils", "nbscripts",
-                      branch="dev/mgarcia", folder = script_folder)
-    add2syspath(script_folder)
+  #Instalation
+  with out:
+    swd = get_ipython().starting_dir
+    script_folder = f"{swd}/scripts"
+    ext_folder = f"{swd}/extensions"
+    pkgs_folder = f"{swd}/pkgs"
+    py_file_extensions = [".py", ".PY", ".ipynb", ".IPYNB"]
 
-    if args.change_permissions:
-      print(f"\x1B[1m\x1B[4m\x1b[34m\nUpdating permissions for script files...\x1b[0m", flush=True)
-      for ext in py_file_extensions:
-        if len([f for f in os.listdir(script_folder) if f.endswith(ext)]) != 0:
-          run(f"chmod +x {script_folder}/*{ext}")
-          run(f"ls -l {script_folder}/*{ext}")
+    if args.download_scripts:
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nDownloading scripts...\x1b[0m", flush=True)
+      download_git_folder("Mr-McGL", "RExamsUtils", "nbscripts",
+                        branch="dev/mgarcia", folder = script_folder)
+      add2syspath(script_folder)
 
-  if args.download_ext:
-    print(f"\x1B[1m\x1B[4m\x1b[34m\nDownloading extensions...\x1b[0m", flush=True)
-    download_git_folder("Mr-McGL", "RExamsUtils", "nbext",
-                      branch="dev/mgarcia", folder = ext_folder)
-    add2syspath(ext_folder)
+      if args.change_permissions:
+        print(f"\x1B[1m\x1B[4m\x1b[34m\nUpdating permissions for script files...\x1b[0m", flush=True)
+        for ext in py_file_extensions:
+          if len([f for f in os.listdir(script_folder) if f.endswith(ext)]) != 0:
+            run(f"chmod +x {script_folder}/*{ext}")
+            run(f"ls -l {script_folder}/*{ext}")
 
-    if args.load_extensions:
-      print(f"\x1B[1m\x1B[4m\x1b[34m\nLoading extensions...\x1b[0m", flush=True)
-      for f in os.listdir(ext_folder):
-        if any(f.endswith(ext) for ext in py_file_extensions):
-          print(f"* \x1b[32m{f}\x1b[0m", flush=True)
-          reload_ext(os.path.splitext(f)[0])
+    if args.download_ext:
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nDownloading extensions...\x1b[0m", flush=True)
+      download_git_folder("Mr-McGL", "RExamsUtils", "nbext",
+                        branch="dev/mgarcia", folder = ext_folder)
+      add2syspath(ext_folder)
+
+      if args.load_extensions:
+        print(f"\x1B[1m\x1B[4m\x1b[34m\nLoading extensions...\x1b[0m", flush=True)
+        for f in os.listdir(ext_folder):
+          if any(f.endswith(ext) for ext in py_file_extensions):
+            print(f"* \x1b[32m{f}\x1b[0m", flush=True)
+            reload_ext(os.path.splitext(f)[0])
 
 
-  if args.download_pkgs:
-    print(f"\x1B[1m\x1B[4m\x1b[34m\nDownloading packages...\x1b[0m", flush=True)
-    download_git_folder("Mr-McGL", "RExamsUtilsBinaries", "pkgs",
-                      branch="main", folder = pkgs_folder)
+    if args.download_pkgs:
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nDownloading packages...\x1b[0m", flush=True)
+      download_git_folder("Mr-McGL", "RExamsUtilsBinaries", "pkgs",
+                        branch="main", folder = pkgs_folder)
 
-    if args.install_pkgs:
-      print(f"\x1B[1m\x1B[4m\x1b[34m\nLoading packages...\x1b[0m", flush=True)
-      for f in os.listdir(pkgs_folder):
-        if f.endswith(".whl"):    
-          print(f"* \x1b[32m{f}\x1b[0m", flush=True)
-          #run(f"pip install --force-reinstall {pkgs_folder}/{f}")
-          run(f"pip install {pkgs_folder}/{f}")
+      if args.install_pkgs:
+        print(f"\x1B[1m\x1B[4m\x1b[34m\nLoading packages...\x1b[0m", flush=True)
+        for f in os.listdir(pkgs_folder):
+          if f.endswith(".whl"):
+            print(f"* \x1b[32m{f}\x1b[0m", flush=True)
+            run(f"pip install --force-reinstall {pkgs_folder}/{f}")

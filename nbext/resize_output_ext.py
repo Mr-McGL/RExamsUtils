@@ -1,1 +1,0 @@
-../extern/scripts_and_ext/resize_output_ext.py
