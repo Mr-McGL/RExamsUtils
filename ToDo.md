@@ -1,5 +1,8 @@
 ## ToDo:
-**** Subier cuaderno de RInColab! y el otro 
+**** Subir cuaderno de RInColab! y el otro 
+**** Actualizar los tests de los scripts en el gist (nuevos nombres de fichero). Actualizarlo en local!!!
+
+
 * Los ficheros de licencias del repositorio y de la libería no concuerdan.
 * Buscar todos en ficheros y traerlos aquí.
 
