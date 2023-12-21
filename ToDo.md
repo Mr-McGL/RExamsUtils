@@ -1,10 +1,18 @@
 ## ToDo:
-**** Subir cuaderno de RInColab! y el otro 
-**** Actualizar los tests de los scripts en el gist (nuevos nombres de fichero). Actualizarlo en local!!!
+**** Los dos tutoriales de inciales hay que actualizarlos y subirlos al repo.
+**** PyExamsUtilsTest hay que subirlo al repo.
+**** Actualizar el NB de scripts y extensiones
 
+**** Nuevas funcionalidades de PyExams!!!!
+********** Actualizar el notebook de test en el repo test!
 
 * Los ficheros de licencias del repositorio y de la libería no concuerdan.
 * Buscar todos en ficheros y traerlos aquí.
+
+*** Ideas para extensiones:
+******** Un nb_mypy para la celda.
+******** Un cell magic que meta los desfases de linea para que los errores esten bien marcados.
+
 
 * Notebooks:
   * Meter enlaces dinamicos al contenido de una carpeta en git. Scripts y extensions.

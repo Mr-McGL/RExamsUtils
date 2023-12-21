@@ -251,8 +251,8 @@ def warn_error_print(msg: str) -> None:
         return
 
     def print_line(m: str, add_prefix: bool, end: str = "\n"):
-        prefix = "\x1b[1m\x1b[32m[R]: \x1b[0m" if add_prefix else ""
-        print(f"{prefix}\x1b[3m\x1B[1m\x1b[35m{m}\x1b[0m", end=end)
+        prefix = "\x1b[1m\x1B[38;5;208m[R]: \x1b[0m" if add_prefix else ""
+        print(f"{prefix}\x1b[3m\x1B[1m\x1B[38;5;220m{m}\x1b[0m", end=end)
 
     lines = msg.split('\n')
     add_prefix = warn_error_print.new_line

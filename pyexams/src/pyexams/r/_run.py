@@ -1,12 +1,11 @@
 from IPython import get_ipython as __get_ipython
 
-def run_R(cmd: str, line: str = '', run_cell: bool =True):
+def run(cmd: str, line: str = '', run_cell: bool =True):
   """Run an R command in the Jupyter notebook.
 
   Parameters:
       cmd (str): The R command to be executed.
-      line (str, optional): If provided, the command is run as a line with the specified
-          line magic. Default is an empty string.
+      line (str, optional): Cell magic parameters. Default is an empty string.
       run_cell (bool, optional): If True, the command is run as a cell magic. If False, it
           is run as a line magic. Default is True.
 
