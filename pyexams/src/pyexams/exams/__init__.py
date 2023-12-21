@@ -5,3 +5,4 @@ from ._toPDF import toPDF
 from ._toNOPS import toNOPS
 from ._toMoodle import toMoodle
 from ._toPandoc import toPandoc
+from ._metadata import print_metadata
