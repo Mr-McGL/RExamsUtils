@@ -1,7 +1,7 @@
 ## ToDo:
 **** Los dos tutoriales de inciales hay que actualizarlos y subirlos al repo.
 **** PyExamsUtilsTest hay que subirlo al repo.
-**** Actualizar el NB de scripts y extensiones
+**** Actualizar el NB de scripts y extensiones (comprobar)
 
 **** Nuevas funcionalidades de PyExams!!!!
 ********** Actualizar el notebook de test en el repo test!
@@ -12,6 +12,8 @@
 *** Ideas para extensiones:
 ******** Un nb_mypy para la celda.
 ******** Un cell magic que meta los desfases de linea para que los errores esten bien marcados.
+
+*** Instalar R exams el paquete.
 
 
 * Notebooks:
