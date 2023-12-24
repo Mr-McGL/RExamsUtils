@@ -1,19 +1,20 @@
 ## ToDo:
 **** Los dos tutoriales de inciales hay que actualizarlos y subirlos al repo.
 **** PyExamsUtilsTest hay que subirlo al repo.
-**** Actualizar el NB de scripts y extensiones (comprobar)
+**** Actualizar el NB de scripts y extensiones (comprobar). El test del repo publico.
 
-**** Nuevas funcionalidades de PyExams!!!!
-********** Actualizar el notebook de test en el repo test!
+
 
 * Los ficheros de licencias del repositorio y de la libería no concuerdan.
 * Buscar todos en ficheros y traerlos aquí.
 
-*** Ideas para extensiones:
+**** Ideas para extensiones:
 ******** Un nb_mypy para la celda.
 ******** Un cell magic que meta los desfases de linea para que los errores esten bien marcados.
 
-*** Instalar R exams el paquete.
+**** Instalar R exams el paquete, al instalar el paquete. 
+
+**** Cambiar pydrive2 en repo_ext!!!! Tambien en la versión privada del repo
 
 
 * Notebooks:
