@@ -8,6 +8,25 @@
 
 import ipywidgets as widgets
 from IPython.display import display
+from pyexmas.ex import run as _run
+
+
+try:
+  from pdf2image import convert_from_path
+except:
+  run("pip install pdf2image")
+  run("sudo apt-get install poppler-utils")
+  from pdf2image import convert_from_path
+
+def PDF(fn):
+  """
+  Display a PDF file
+  """
+  images = convert_from_path(fn)
+  for img in images:
+    display(img)
+    print()
+
 
 class GridOutput(widgets.Widget):
   """
