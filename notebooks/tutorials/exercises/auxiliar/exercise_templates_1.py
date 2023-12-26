@@ -8,7 +8,7 @@
 
 import ipywidgets as widgets
 from IPython.display import display
-from pyexmas.ex import run as _run
+from pyexams.ex import run as _run
 
 
 try:
