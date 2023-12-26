@@ -14,8 +14,8 @@ from pyexams.ex import run as _run
 try:
   from pdf2image import convert_from_path
 except:
-  run("pip install pdf2image")
-  run("sudo apt-get install poppler-utils")
+  _run("pip install pdf2image")
+  _run("sudo apt-get install poppler-utils")
   from pdf2image import convert_from_path
 
 def PDF(fn):
