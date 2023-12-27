@@ -27,6 +27,8 @@
         Install the development version of R/exams (not recommended).
     --no-nops-support, -nns:
         Exclude support for NOPS.
+    --no-python, -npy:
+        Exclude support for Python ("reticulate").
     --no-pypandoc, -npp:
         Exclude installation of the 'pypandoc' dependency.
     --no-jedi:
@@ -300,7 +302,7 @@ def install_rpy2(rpy2ver: str | None = None):
 # Install R/examas
 def install_rexams(demo_path: str | None = None, rdev:bool = False,
                    nops_support: bool = True, pypandoc: bool = True,
-                   jedi: bool = True, qti_demo = False):
+                   jedi: bool = True, py:bool = True, qti_demo:bool = False):
 
   import rpy2 #Cannot guarantee it is installed up to this point.
   rpy2.rinterface_lib.callbacks.consolewrite_warnerror = warn_error_print
@@ -329,6 +331,11 @@ def install_rexams(demo_path: str | None = None, rdev:bool = False,
     if jedi:
       print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling JEDI.\x1b[0m")
       run("pip install jedi")
+
+    if py:
+      print(f"\x1B[1m\x1B[4m\x1b[34m\nInstalling reticulate.\x1b[0m")
+      run_R('install.packages("reticulate")')
+      run_R('library(reticulate)')
 
     print(f"\x1B[1m\x1B[4m\x1b[34m\nImporting exams into the R environment.\x1b[0m")
     run_R('library("exams")')
@@ -364,13 +371,15 @@ if __name__ == '__main__':
                   help="Exclude installation of the 'pypandoc' dependency")
   ap.add_argument('--no-jedi', dest='jedi', action='store_false',
                   help="Exclude 'Jedi' support")
+  ap.add_argument('--no-python','-npy', dest='py', action='store_false',
+                  help="Exclude 'Python' support (reticulate)")
   ap.add_argument('--qti-demo', '-qd', dest='qti_demo', action='store_true',
                   help="Install R/exmas demo files for 'qti'")
   ap.set_defaults(rdev= False, nops_support=True, pypandoc=True,
-                  jedi=True, qti_demo = False)
+                  jedi=True, qti_demo = False, py=True)
 
   args = ap.parse_args()
 
   install_rpy2(args.rpy2ver)
   install_rexams(args.demo_path, args.rdev, args.nops_support, args.pypandoc,
-                 args.jedi,args.qti_demo)
+                 args.jedi,args.py,args.qti_demo)

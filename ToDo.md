@@ -1,4 +1,6 @@
 ## ToDo:
+**** Añadir soporte para python en el script de configuración.
+
 **** Los dos tutoriales de inciales hay que actualizarlos y subirlos al repo.
 **** PyExamsUtilsTest hay que subirlo al repo.
 **** Actualizar el NB de scripts y extensiones (comprobar). El test del repo publico.
