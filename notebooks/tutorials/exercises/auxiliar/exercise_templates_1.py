@@ -20,13 +20,14 @@ except:
 
 def PDF(fn):
   """
-  Display a PDF file
+  Display a PDF file.
+
+  Parameters:
+  - fn (str): Path to the PDF file.
   """
   images = convert_from_path(fn)
   for img in images:
     display(img)
-    print()
-
 
 class GridOutput(widgets.Widget):
   """
