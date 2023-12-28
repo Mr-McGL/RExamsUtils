@@ -170,7 +170,7 @@ class QuestionBuilder(widgets.Widget):
 
     with self._render_out:
       clear_output(wait = True)
-      display(PDF(f"{os.path.join(folder,fn)}1.pdf"))
+      PDF(f"{os.path.join(folder,fn)}1.pdf")
     with self._console:
       shutil.rmtree(folder)
 
