@@ -16,7 +16,10 @@ def run(cmd: str, line: str = '', run_cell: bool =True):
   Usage:
     run_R("library(ggplot2)", run_cell=True)
   """
-  if run_cell:
-    __get_ipython().run_cell_magic('R', line, cmd)
-  else:
-    return __get_ipython().run_line_magic('R', cmd)
+  try:
+      if run_cell:
+          __get_ipython().run_cell_magic('R', line, cmd)
+      else:
+          return __get_ipython().run_line_magic('R', cmd)
+  except:
+      return ro.r(cmd)
