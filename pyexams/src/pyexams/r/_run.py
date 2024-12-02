@@ -1,4 +1,5 @@
 from IPython import get_ipython as __get_ipython
+import rpy2.robjects as ro
 
 def run(cmd: str, line: str = '', run_cell: bool =True):
   """Run an R command in the Jupyter notebook.
